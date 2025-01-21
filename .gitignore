@@ -1,0 +1,12 @@
+# Ignore log/settings files
+.ini
+.log
+
+# Ignore directories
+.vs/
+SR-Overlay/x64/
+SR-Overlay/x86/
+SR-Overlay/Debug/
+x64/
+Debug/
+Release/
