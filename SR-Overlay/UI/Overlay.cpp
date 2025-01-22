@@ -105,6 +105,7 @@ int UI::CreateOverlay()
     // Our state
     bool showDemoWindow = true;
     bool showSpeed = false;
+    bool showFPS = false;
     bool isKeyDown = false;
     ImVec4 clear_color = ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
 
@@ -189,6 +190,7 @@ int UI::CreateOverlay()
 
             ImGui::Checkbox("Demo Window", &showDemoWindow);      // Edit bools storing our window open/close state
             ImGui::Checkbox("Show speed", &showSpeed);
+            ImGui::Checkbox("Show FPS", &showFPS);
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
             ImGui::End();
@@ -196,7 +198,13 @@ int UI::CreateOverlay()
 
         if (showSpeed) {
             ImGui::Begin("Speed");
-            ImGui::Text("Speed: %.0f", gameData.flLocalSpeed);
+            ImGui::Text("Speed: %.0f", gameData.playerGroundSpeed);
+            ImGui::End();
+        }
+
+        if (showFPS) {
+            ImGui::Begin("FPS");
+            ImGui::Text("FPS: %.2f", gameData.fps);
             ImGui::End();
         }
 

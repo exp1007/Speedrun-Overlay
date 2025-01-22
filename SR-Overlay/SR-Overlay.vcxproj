@@ -147,6 +147,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Memory\Memory.cpp" />
     <ClCompile Include="Memory\Process.cpp" />
+    <ClCompile Include="SDK\GameSDK.cpp" />
     <ClCompile Include="UI\Overlay.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +161,7 @@
     <ClInclude Include="ImGUI\imstb_truetype.h" />
     <ClInclude Include="Memory\Memory.hpp" />
     <ClInclude Include="Memory\Process.hpp" />
+    <ClInclude Include="SDK\GameSDK.hpp" />
     <ClInclude Include="UI\UI.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
