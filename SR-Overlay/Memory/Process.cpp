@@ -77,7 +77,6 @@ void Process::SetupProcess() {
     Process::ProcID = FindProcessId("hl.exe");
     Process::ProcHandle = OpenProcess(PROCESS_VM_READ | SYNCHRONIZE, FALSE, Process::ProcID);
     Process::ClientModuleBase = GetModuleBaseAddress(Process::ProcID, "client.dll");
-    Process::RenderingModuleBase = GetModuleBaseAddress(Process::ProcID, "nvwgf2um.dll");
 
     // UI
 	UI::clientHwnd = FindWindow(nullptr, "Counter-Strike");
