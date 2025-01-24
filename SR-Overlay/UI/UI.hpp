@@ -6,5 +6,7 @@ namespace UI {
 	extern RECT clientSize;
 	extern HWND clientHwnd;
 	extern WINDOWINFO clientWindowInfo;
+
 	int CreateOverlay();
+	void ShowElements(bool* isMenuOpen);
 }

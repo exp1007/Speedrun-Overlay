@@ -94,19 +94,18 @@ int UI::CreateOverlay()
     // - Use '#define IMGUI_ENABLE_FREETYPE' in your imconfig file to use Freetype for higher quality font rendering.
     // - Read 'docs/FONTS.md' for more instructions and details.
     // - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
-    io.Fonts->AddFontDefault();
+    //io.Fonts->AddFontDefault();
     //io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf", 18.0f);
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
+
     ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\Arial.ttf", 16.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
     IM_ASSERT(font != nullptr);
 
     // Our state
-    bool showDemoWindow = true;
-    bool showSpeed = false;
-    bool showFPS = false;
-    bool isKeyDown = false;
+    bool showOverlay = true;
+    bool isKeyDown = true;
     ImVec4 clear_color = ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
 
     // Main loop
@@ -145,8 +144,21 @@ int UI::CreateOverlay()
 #endif // _DEBUG
         }
 
+        if (GetForegroundWindow() == UI::clientHwnd || GetForegroundWindow() == overlayHwnd) {
+            if (showOverlay == false) {
+                ShowWindow(overlayHwnd, SW_SHOWNOACTIVATE);
+                SetClickThrough(overlayHwnd, ((isMenuOpen && showOverlay) ? true : false));
+                showOverlay = true;
+            }
+        }
+        else if (showOverlay == true) {
+            SetClickThrough(overlayHwnd, false);
+            ShowWindow(overlayHwnd, SW_HIDE);
+            showOverlay = false;
+        }
+
         // Making our window show in fullscreen
-        SetWindowPos(overlayHwnd, HWND_TOPMOST, UI::clientWindowInfo.rcClient.left, UI::clientWindowInfo.rcClient.top, UI::clientWindowInfo.rcClient.right, UI::clientSize.bottom, SWP_SHOWWINDOW | SWP_NOACTIVATE);
+        SetWindowPos(overlayHwnd, HWND_TOPMOST, UI::clientWindowInfo.rcClient.left, UI::clientWindowInfo.rcClient.top, UI::clientSize.right, UI::clientSize.bottom, SWP_SHOWWINDOW | SWP_NOACTIVATE);
 
         // Handle lost D3D9 device
         if (g_DeviceLost)
@@ -176,37 +188,8 @@ int UI::CreateOverlay()
         ImGui_ImplWin32_NewFrame();
         ImGui::NewFrame();
 
-        // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-        if (showDemoWindow)
-            ImGui::ShowDemoWindow(&showDemoWindow);
-
-        // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
-        if(isMenuOpen)
-        {
-            static float f = 0.0f;
-            static int counter = 0;
-
-            ImGui::Begin("Menu");                          // Create a window called "Hello, world!" and append into it.
-
-            ImGui::Checkbox("Demo Window", &showDemoWindow);      // Edit bools storing our window open/close state
-            ImGui::Checkbox("Show speed", &showSpeed);
-            ImGui::Checkbox("Show FPS", &showFPS);
-
-            ImGui::Text("FPS Overlay: %.0f", io.Framerate);
-            ImGui::End();
-        }
-
-        if (showSpeed) {
-            ImGui::Begin("Speed");
-            ImGui::Text("Speed: %.0f", gameData.playerGroundSpeed);
-            ImGui::End();
-        }
-
-        if (showFPS) {
-            ImGui::Begin("FPS");
-            ImGui::Text("FPS: %.2f", gameData.fps);
-            ImGui::End();
-        }
+        if(showOverlay)
+            UI::ShowElements(&isMenuOpen);
 
         // Rendering
         ImGui::EndFrame();
