@@ -192,7 +192,7 @@ int UI::CreateOverlay()
             ImGui::Checkbox("Show speed", &showSpeed);
             ImGui::Checkbox("Show FPS", &showFPS);
 
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+            ImGui::Text("FPS Overlay: %.0f", io.Framerate);
             ImGui::End();
         }
 
