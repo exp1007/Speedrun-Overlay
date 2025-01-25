@@ -11,6 +11,14 @@ struct vec3_t {
 };
 
 namespace SDK {
+	
+	// Connection made using a modding value, server plugin required
+
+	enum TimerStates {
+		in_start	= 1 << 0,
+		out_start	= 1 << 1,
+		in_finish	= 1 << 2
+	};
 
 	// https://github.com/ValveSoftware/halflife/blob/b1b5cf5892918535619b2937bb927e46cb097ba1/common/pmtrace.h#L21
 
@@ -112,9 +120,8 @@ namespace SDK {
 		uint8_t			padding1[0x8];
 
 		int				player_index;  // So we don't try to run the PM_CheckStuck nudging too quickly.
-		bool			server;        // For debugging, are we running physics code on server side?
+		float			server;        // For debugging, are we running physics code on server side?
 
-		bool			multiplayer;   // 1 == multiplayer server
 		float			frametime;
 
 		vec3_t			forward, right, up; // Vectors for angles

@@ -14,6 +14,11 @@ void Memory::Loop() {
 	float oldFps[MAX_FPS_ARRAY];
 	int currentFpsIndex = 0;
 
+	float prevServerTime = 0.f;
+
+	uint32_t timerState = 0;
+	uint32_t prevTimerState = 0;
+
 	while (true) {
 
 		uint32_t playerMovePtr;
@@ -22,35 +27,46 @@ void Memory::Loop() {
 		Memory::ReadMemory(Process::ClientModuleBase + offsets::GlobalPtr_playermove_s, &playerMovePtr);
 		Memory::ReadMemory(playerMovePtr, &playerMove);
 
+		// Ground speed
 		gameData.playerGroundSpeed = std::sqrt(playerMove.velocity.x * playerMove.velocity.x + playerMove.velocity.y * playerMove.velocity.y);
-		gameData.fps = 1.f / playerMove.frametime;
 
-		oldFps[currentFpsIndex] = 1.f / playerMove.frametime;
-		if (currentFpsIndex == MAX_FPS_ARRAY)
-			currentFpsIndex = 0;
-		else
-			currentFpsIndex++;
+		// Simulated FPS
+		{
+			oldFps[currentFpsIndex] = 1.f / playerMove.frametime;
+			if (currentFpsIndex == MAX_FPS_ARRAY)
+				currentFpsIndex = 0;
+			else
+				currentFpsIndex++;
 
-		float simulatedFps = 0.f;
-		for (uint32_t index = 0; index < MAX_FPS_ARRAY; index++) {
-			simulatedFps += oldFps[index];
+			float simulatedFps = 0.f;
+			for (uint32_t index = 0; index < MAX_FPS_ARRAY; index++) {
+				simulatedFps += oldFps[index];
+			}
+			simulatedFps = simulatedFps / MAX_FPS_ARRAY;
+			gameData.fps = simulatedFps;
 		}
-		simulatedFps = simulatedFps / MAX_FPS_ARRAY;
-		gameData.fps = simulatedFps;
-		//printf("fps: %f\n", simulatedFps);
 
-		//for (int index = 0; index < 150; index++) {
-		//	if(physEnt[index].team != 0)
-		//		printf("(%d) team: %d\n", index, physEnt[index].team);
-		//	if (physEnt[index].solid != 0)
-		//		printf("(%d) solid: %d\n", index, physEnt[index].solid);
-		//	if (physEnt[index].takedamage != 0)
-		//		printf("(%d) takedamage: %d\n", index, physEnt[index].takedamage);
-		//}
-		//printf("Frametime: %f (%f)\n", playerMove.frametime, gameData.fps);
-		//printf("Speed: %.2f, %.2f, %.2f\n", playerMove.velocity.x, playerMove.velocity.y, playerMove.velocity.z);
-		//printf("Origin: %.2f, %.2f, %.2f\n", playerMove.origin.x, playerMove.origin.y, playerMove.origin.z);
+		// Timer
+		{
+			// Using iuser2 as communication chanel for server timer state
+			timerState = playerMove.iuser2;
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(5));
+			if (timerState == SDK::in_finish)
+				continue;
+
+			if (timerState != prevTimerState) {
+				prevTimerState = timerState;
+				prevServerTime == 0;
+				gameData.timer = 0.f;
+			}
+
+			if (prevServerTime == 0)
+				prevServerTime = playerMove.server;
+
+			gameData.timer += (playerMove.server - prevServerTime) / 1000;
+			prevServerTime = playerMove.server;
+		}
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 }

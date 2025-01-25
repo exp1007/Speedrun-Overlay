@@ -9,6 +9,7 @@ void UI::ShowElements(bool* isMenuOpen) {
     static bool showDemoWindow = false;
     static bool showSpeed = true;
     static bool showFPS = true;
+    static bool showTimer = true;
 
     ImGuiIO& io = ImGui::GetIO();
     ImGuiStyle style = ImGui::GetStyle();
@@ -33,6 +34,7 @@ void UI::ShowElements(bool* isMenuOpen) {
 
         ImGui::Checkbox("Show speed", &showSpeed);
         ImGui::Checkbox("Show FPS", &showFPS);
+        ImGui::Checkbox("Show timer", &showTimer);
         ImGui::DragFloat("Global font scale", &io.FontGlobalScale, 0.005f, 0, 2, "%.2f", ImGuiSliderFlags_AlwaysClamp);
 
         ImGui::Text("FPS Overlay: %.0f", io.Framerate);
@@ -56,6 +58,12 @@ void UI::ShowElements(bool* isMenuOpen) {
     if (showFPS) {
         ImGui::Begin("FPS", nullptr, windowFlags);
         ImGui::Text("FPS: %.0f", gameData.fps);
+        ImGui::End();
+    }
+
+    if (showTimer) {
+        ImGui::Begin("Timer", nullptr, windowFlags);
+        ImGui::Text("Timer: %.2f", gameData.timer);
         ImGui::End();
     }
     
